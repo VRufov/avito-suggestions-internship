@@ -13,6 +13,7 @@ class ViewController: UIViewController {
 
     private let closeButton: CloseUIButton = {
         let button = CloseUIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -20,6 +21,7 @@ class ViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: K.Labels.hugeTitleSize, weight: .heavy)
         label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -32,6 +34,7 @@ class ViewController: UIViewController {
             SuggestionUICollectionViewCell.self,
             forCellWithReuseIdentifier: SuggestionUICollectionViewCell.identifier
         )
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
     
@@ -41,6 +44,7 @@ class ViewController: UIViewController {
         button.setTitle("Выбрать", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: K.Labels.largeTitleSize, weight: .regular)
         button.layer.cornerRadius = K.Buttons.defaultCornerRadius
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -48,31 +52,27 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
+        
+        loadData()
+        titleLabel.text = info?.result.title
+        addSubviews()
+        setDelegates()
+        setConstraints()
+    }
+    
+    private func loadData() {
         do {
             let data = try Data(contentsOf: Bundle.main.url(forResource: "result", withExtension: "json")!)
             info = try JSONDecoder().decode(SuggectionsResponseModel.self, from: data)
             list = info?.result.list
             suggestionsCollectionView.reloadData()
         } catch { print(error) }
-        
-        titleLabel.text = info?.result.title
-        
-        addSubviews()
-        setDelegates()
-        setConstraints()
     }
     
     private func addSubviews() {
-        closeButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(closeButton)
-        
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(titleLabel)
-        
-        suggestionsCollectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(suggestionsCollectionView)
-        
-        applyButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(applyButton)
     }
     

@@ -84,6 +84,12 @@ class SuggestionUICollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        addSubviews()
+        applyConstraints()
+    }
+    
+    private func addSubviews() {
         contentView.addSubview(icon)
         contentView.addSubview(stack)
         contentView.addSubview(isSelectedIcon)
@@ -91,7 +97,8 @@ class SuggestionUICollectionViewCell: UICollectionViewCell {
         stack.addSubview(titleLabel)
         stack.addSubview(descriptionLabel)
         stack.addSubview(priceLabel)
-
+    }
+    private func applyConstraints() {
         NSLayoutConstraint.activate([
             icon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
             icon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
