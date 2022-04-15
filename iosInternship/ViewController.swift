@@ -39,11 +39,21 @@ class ViewController: UIViewController {
     }()
     
     let applyButton: UIButton = {
+        var configuration = UIButton.Configuration.filled()
+        configuration.title = "Выбрать"
+        configuration.titleAlignment = .center
+        configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: K.Labels.largeTitleSize, weight: .regular)
+            return outgoing
+        }
+        configuration.contentInsets = NSDirectionalEdgeInsets(top: 15, leading: 0, bottom: 15, trailing: 0)
+        configuration.background.backgroundColor = K.Colors.blue
+        
         let button = UIButton()
-        button.backgroundColor = K.Colors.blue
-        button.setTitle("Выбрать", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: K.Labels.largeTitleSize, weight: .regular)
+        button.configuration = configuration
         button.layer.cornerRadius = K.Buttons.defaultCornerRadius
+        button.addTarget(self, action: #selector(applyButtonPressed(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -87,7 +97,7 @@ class ViewController: UIViewController {
             closeButton.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
             closeButton.topAnchor.constraint(equalTo: margins.topAnchor),
             
-            titleLabel.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 60),
+            titleLabel.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 40),
             titleLabel.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: margins.trailingAnchor),
             
@@ -100,6 +110,23 @@ class ViewController: UIViewController {
             applyButton.trailingAnchor.constraint(equalTo: margins.trailingAnchor),
             applyButton.bottomAnchor.constraint(equalTo: margins.bottomAnchor),
         ])
+    }
+    
+    @objc func applyButtonPressed(_ sender: UIButton) {
+        let cell = getSelectedCell() ?? nil
+        let message = cell != nil ? cell?.data!.title : "Пожалуйста, выберите предложение"
+        
+        let alert = UIAlertController(title: message, message: "", preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func getSelectedCell() -> SuggestionUICollectionViewCell? {
+        if let indexPath = suggestionsCollectionView.indexPathsForSelectedItems?.first {
+            let cell = suggestionsCollectionView.cellForItem(at: indexPath) as! SuggestionUICollectionViewCell
+            return cell
+        }
+        return nil
     }
 }
 

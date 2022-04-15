@@ -1,5 +1,5 @@
 //
-//  UIImageViewExt.swift
+//  UIImageViewExtension.swift
 //  iosInternship
 //
 //  Created by Вадим Руфов on 4/13/22.

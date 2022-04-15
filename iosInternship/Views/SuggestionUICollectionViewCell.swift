@@ -1,5 +1,5 @@
 //
-//  AdRateCollectionViewCell.swift
+//  SuggestionUICollectionViewCell.swift
 //  iosInternship
 //
 //  Created by Вадим Руфов on 4/11/22.
