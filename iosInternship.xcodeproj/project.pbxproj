@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		7E0F6FF82806F50E003C4D2A /* UIImageViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0F6FF72806F50E003C4D2A /* UIImageViewExtension.swift */; };
 		7E22135C2804B1EC002F815F /* SuggestionUICollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E22135B2804B1EC002F815F /* SuggestionUICollectionViewCell.swift */; };
+		7E3FB2F4280AE7B40073DD12 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 7E3FB2F3280AE7B40073DD12 /* .gitignore */; };
+		7E3FB2F6280AE8000073DD12 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 7E3FB2F5280AE8000073DD12 /* README.md */; };
 		7E76B9A428018DC6000F0AE3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E76B9A328018DC6000F0AE3 /* AppDelegate.swift */; };
 		7E76B9A628018DC6000F0AE3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E76B9A528018DC6000F0AE3 /* SceneDelegate.swift */; };
 		7E76B9A828018DC6000F0AE3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E76B9A728018DC6000F0AE3 /* ViewController.swift */; };
@@ -26,6 +28,8 @@
 /* Begin PBXFileReference section */
 		7E0F6FF72806F50E003C4D2A /* UIImageViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageViewExtension.swift; sourceTree = "<group>"; };
 		7E22135B2804B1EC002F815F /* SuggestionUICollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionUICollectionViewCell.swift; sourceTree = "<group>"; };
+		7E3FB2F3280AE7B40073DD12 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		7E3FB2F5280AE8000073DD12 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		7E76B9A028018DC6000F0AE3 /* iosInternship.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosInternship.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E76B9A328018DC6000F0AE3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7E76B9A528018DC6000F0AE3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -72,6 +76,8 @@
 		7E76B99728018DC6000F0AE3 = {
 			isa = PBXGroup;
 			children = (
+				7E3FB2F5280AE8000073DD12 /* README.md */,
+				7E3FB2F3280AE7B40073DD12 /* .gitignore */,
 				7E76B9A228018DC6000F0AE3 /* iosInternship */,
 				7E76B9A128018DC6000F0AE3 /* Products */,
 			);
@@ -181,7 +187,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E3FB2F4280AE7B40073DD12 /* .gitignore in Resources */,
 				7E76B9B028018DCA000F0AE3 /* LaunchScreen.storyboard in Resources */,
+				7E3FB2F6280AE8000073DD12 /* README.md in Resources */,
 				7EDA8A402806176A001D6B79 /* result.json in Resources */,
 				7E76B9AD28018DCA000F0AE3 /* Assets.xcassets in Resources */,
 			);
