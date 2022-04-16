@@ -11,7 +11,7 @@ class SuggestionUICollectionViewCell: UICollectionViewCell {
     static let identifier = "AdRateCollectionViewCell"
     var maxWidth: CGFloat = 0 {
         didSet {
-            // Easy hack to disable automatic width resizing
+            // Small hack to disable automatic width resizing
             NSLayoutConstraint.activate([
                 contentView.widthAnchor.constraint(equalToConstant: maxWidth)
             ])

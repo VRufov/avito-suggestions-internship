@@ -113,8 +113,8 @@ class ViewController: UIViewController {
     }
     
     @objc func applyButtonPressed(_ sender: UIButton) {
-        let cell = getSelectedCell() ?? nil
-        let message = cell != nil ? cell?.data!.title : "Пожалуйста, выберите предложение"
+        let cell = getSelectedCell()
+        let message = cell?.data!.title ?? "Пожалуйста, выберите предложение"
         
         let alert = UIAlertController(title: message, message: "", preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
