@@ -34,4 +34,8 @@ struct K {
     struct Layers {
         static let defaultLayerRadius: CGFloat = 10.0
     }
+    
+    struct InsetOffsets {
+        static let collectionViewDefaultOffset: CGFloat = 20
+    }
 }

@@ -8,7 +8,13 @@
 import UIKit
 
 class SuggestionUICollectionViewCell: UICollectionViewCell {
-    static let identifier = "AdRateCollectionViewCell"
+    
+    override var isSelected: Bool {
+        didSet {
+            updateSelectedIcon(with: isSelected)
+        }
+    }
+    
     var maxWidth: CGFloat = 0 {
         didSet {
             // Small hack to disable automatic width resizing
@@ -18,25 +24,20 @@ class SuggestionUICollectionViewCell: UICollectionViewCell {
         }
     }
     
-    override var isSelected: Bool {
+    var data: SuggestionsOfferModel? {
         didSet {
-            isSelected ? setIsSelected() : setIsDeselected()
-        }
-    }
-
-    var data: SuggectionsOfferModel? {
-        didSet {
-            titleLabel.text = data!.title
+            titleLabel.text = data?.title
             descriptionLabel.text = data?.description
-            priceLabel.text = data!.price
-            icon.setImageFromServerURL(urlString: data!.icon.imageURL)
+            priceLabel.text = data?.price
+            if let imageURL = data?.icon.imageURL {
+                icon.setImageFromServerURL(urlString: imageURL)
+            }
         }
     }
     
     private var icon: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
@@ -44,7 +45,6 @@ class SuggestionUICollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: K.Labels.largeTitleSize, weight: .bold)
         label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -52,99 +52,103 @@ class SuggestionUICollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: K.Labels.mediumTitleSize, weight: .regular)
         label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let priceLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: K.Labels.mediumTitleSize, weight: .bold)
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    private let stack: UIView = {
-        let stackView = UIStackView()
-        stackView.distribution = .fillProportionally
-        stackView.axis = .vertical
-        stackView.alignment = .leading
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+    private let labelsContainer: UIView = {
+        let stackView = UIView()
         return stackView
     }()
     
-    let isSelectedIcon: UIImageView = {
+    private let selectedIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.isHidden = true
         imageView.contentMode = .scaleAspectFill
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold, scale: .large)
         imageView.image = UIImage(systemName: "checkmark.circle.fill", withConfiguration: imageConfig)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        addSubviews()
-        applyConstraints()
-    }
-    
-    private func addSubviews() {
-        contentView.addSubview(icon)
-        contentView.addSubview(stack)
-        contentView.addSubview(isSelectedIcon)
-        
-        stack.addSubview(titleLabel)
-        stack.addSubview(descriptionLabel)
-        stack.addSubview(priceLabel)
-    }
-    private func applyConstraints() {
-        NSLayoutConstraint.activate([
-            icon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
-            icon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
-            icon.widthAnchor.constraint(equalToConstant: 52),
-            icon.heightAnchor.constraint(equalToConstant: 52),
-            
-            stack.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 10),
-            stack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
-            stack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -30),
-            stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            
-            titleLabel.leadingAnchor.constraint(equalTo: stack.leadingAnchor),
-            titleLabel.topAnchor.constraint(equalTo: stack.topAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: descriptionLabel.topAnchor),
-            
-            descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor),
-            descriptionLabel.leadingAnchor.constraint(equalTo: stack.leadingAnchor),
-            descriptionLabel.trailingAnchor.constraint(equalTo: stack.trailingAnchor),
-            
-            priceLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 20),
-            priceLabel.leadingAnchor.constraint(equalTo: stack.leadingAnchor),
-            
-            isSelectedIcon.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
-            isSelectedIcon.leadingAnchor.constraint(equalTo: stack.trailingAnchor),
-            isSelectedIcon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 35),
-            
-            contentView.bottomAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 20)
-        ])
+        setupView()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        backgroundColor = K.Colors.gray
-        layer.cornerRadius = K.Layers.defaultLayerRadius
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        titleLabel.text = nil
+        descriptionLabel.text = nil
+        priceLabel.text = nil
+        icon.image = nil
     }
     
-    func setIsSelected() {
-        isSelectedIcon.isHidden = !isSelectedIcon.isHidden
+    private func setupView() {
+        configureContentView()
+        
+        contentView.addSubview(icon)
+        contentView.addSubview(labelsContainer)
+        contentView.addSubview(selectedIcon)
+        
+        labelsContainer.addSubview(titleLabel)
+        labelsContainer.addSubview(descriptionLabel)
+        labelsContainer.addSubview(priceLabel)
+        
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        priceLabel.translatesAutoresizingMaskIntoConstraints = false
+        labelsContainer.translatesAutoresizingMaskIntoConstraints = false
+        selectedIcon.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            icon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
+            icon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            icon.widthAnchor.constraint(equalToConstant: 52),
+            icon.heightAnchor.constraint(equalToConstant: 52),
+            
+            labelsContainer.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 10),
+            labelsContainer.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
+            labelsContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -30),
+            labelsContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            
+            titleLabel.leadingAnchor.constraint(equalTo: labelsContainer.leadingAnchor),
+            titleLabel.topAnchor.constraint(equalTo: labelsContainer.topAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: descriptionLabel.topAnchor),
+            
+            descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor),
+            descriptionLabel.leadingAnchor.constraint(equalTo: labelsContainer.leadingAnchor),
+            descriptionLabel.trailingAnchor.constraint(equalTo: labelsContainer.trailingAnchor),
+            
+            priceLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 20),
+            priceLabel.leadingAnchor.constraint(equalTo: labelsContainer.leadingAnchor),
+            
+            selectedIcon.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            selectedIcon.leadingAnchor.constraint(equalTo: labelsContainer.trailingAnchor),
+            selectedIcon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 35),
+            
+            contentView.bottomAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 20)
+        ])
     }
     
-    func setIsDeselected() {
-        isSelectedIcon.isHidden = true
+    private func configureContentView() {
+        contentView.backgroundColor = K.Colors.gray
+        contentView.layer.cornerRadius = K.Layers.defaultLayerRadius
+    }
+    
+    private func updateSelectedIcon(with isSelectedState: Bool) {
+        selectedIcon.isHidden = !isSelectedState
     }
 }

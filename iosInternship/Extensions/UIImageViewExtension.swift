@@ -7,19 +7,16 @@
 
 import UIKit
 
+private let downloader = CachedImageDownloader(imageDownloader: ImageDownloader())
+
 extension UIImageView {
 
     public func setImageFromServerURL(urlString: String) {
-        DispatchQueue.global().async(execute: { () -> Void in
-            if let url = NSURL(string: urlString)  {
-                if let data = NSData(contentsOf: url as URL) {
-                    let imageAux = UIImage(data: data as Data)
-                    DispatchQueue.main.async(execute: { () -> Void in
-                        self.image = imageAux
-                    })
-                }
+        guard let imageURL = URL(string: urlString) else { return }
+        downloader.downloadImage(with: imageURL) { image in
+            DispatchQueue.main.async {
+                self.image = image
             }
-        })
-
+        }
     }
 }

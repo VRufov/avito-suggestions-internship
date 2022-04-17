@@ -7,13 +7,13 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-    private var info: SuggectionsResponseModel?
-    private var list: [SuggectionsOfferModel]?
-
+final class ViewController: UIViewController {
+    private var info: SuggestionsResponseModel?
+    
+    private var list: [SuggestionsOfferModel] = []
+    
     private let closeButton: CloseUIButton = {
         let button = CloseUIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -21,24 +21,28 @@ class ViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: K.Labels.hugeTitleSize, weight: .heavy)
         label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    let suggestionsCollectionView: UICollectionView = {
+    private let suggestionsCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .systemBackground
         collectionView.register(
             SuggestionUICollectionViewCell.self,
-            forCellWithReuseIdentifier: SuggestionUICollectionViewCell.identifier
+            forCellWithReuseIdentifier: "\(SuggestionUICollectionViewCell.self)"
         )
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.contentInset = UIEdgeInsets(
+            top: 0,
+            left: K.InsetOffsets.collectionViewDefaultOffset,
+            bottom: 0,
+            right: K.InsetOffsets.collectionViewDefaultOffset
+        )
         return collectionView
     }()
     
-    let applyButton: UIButton = {
+    private let applyButton: UIButton = {
         var configuration = UIButton.Configuration.filled()
         configuration.title = "Выбрать"
         configuration.titleAlignment = .center
@@ -49,12 +53,10 @@ class ViewController: UIViewController {
         }
         configuration.contentInsets = NSDirectionalEdgeInsets(top: 15, leading: 0, bottom: 15, trailing: 0)
         configuration.background.backgroundColor = K.Colors.blue
-        
         let button = UIButton()
         button.configuration = configuration
         button.layer.cornerRadius = K.Buttons.defaultCornerRadius
-        button.addTarget(self, action: #selector(applyButtonPressed(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
+        
         return button
     }()
     
@@ -62,36 +64,26 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
-        
         loadData()
-        titleLabel.text = info?.result.title
-        addSubviews()
-        setDelegates()
-        setConstraints()
+        titleLabel.text = info?.result?.title
+        setupView()
+        applyButton.addTarget(self, action: #selector(applyButtonPressed), for: .touchUpInside)
     }
     
-    private func loadData() {
-        do {
-            let data = try Data(contentsOf: Bundle.main.url(forResource: "result", withExtension: "json")!)
-            info = try JSONDecoder().decode(SuggectionsResponseModel.self, from: data)
-            list = info?.result.list
-            suggestionsCollectionView.reloadData()
-        } catch { print(error) }
-    }
-    
-    private func addSubviews() {
+    private func setupView() {
         view.addSubview(closeButton)
         view.addSubview(titleLabel)
         view.addSubview(suggestionsCollectionView)
         view.addSubview(applyButton)
-    }
-    
-    private func setDelegates() {
+        
         suggestionsCollectionView.delegate = self
         suggestionsCollectionView.dataSource = self
-    }
-    
-    private func setConstraints() {
+        
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        suggestionsCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        applyButton.translatesAutoresizingMaskIntoConstraints = false
+        
         let margins = view.layoutMarginsGuide
         NSLayoutConstraint.activate([
             closeButton.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
@@ -101,9 +93,9 @@ class ViewController: UIViewController {
             titleLabel.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: margins.trailingAnchor),
             
-            suggestionsCollectionView.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
+            suggestionsCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             suggestionsCollectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
-            suggestionsCollectionView.trailingAnchor.constraint(equalTo: margins.trailingAnchor),
+            suggestionsCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             suggestionsCollectionView.bottomAnchor.constraint(equalTo: applyButton.topAnchor),
             
             applyButton.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
@@ -112,7 +104,14 @@ class ViewController: UIViewController {
         ])
     }
     
-    @objc func applyButtonPressed(_ sender: UIButton) {
+    private func loadData() {
+        if let data = JSONLoader.loadJSON(fileName: "result") {
+            info = data
+            list = info?.result?.list ?? []
+        }
+    }
+    
+    @objc private func applyButtonPressed() {
         let cell = getSelectedCell()
         let message = cell?.data!.title ?? "Пожалуйста, выберите предложение"
         
@@ -132,19 +131,16 @@ class ViewController: UIViewController {
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if let count = list?.count {
-            return count
-        }
-        return 0
+        list.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = suggestionsCollectionView.dequeueReusableCell(
-            withReuseIdentifier: SuggestionUICollectionViewCell.identifier,
+            withReuseIdentifier: "\(SuggestionUICollectionViewCell.self)",
             for: indexPath
         ) as! SuggestionUICollectionViewCell
-        cell.data = list![indexPath.row]
-        cell.maxWidth = suggestionsCollectionView.bounds.width
+        cell.data = list[indexPath.row]
+        cell.maxWidth = suggestionsCollectionView.bounds.width - 2 * K.InsetOffsets.collectionViewDefaultOffset
         return cell
     }
 }

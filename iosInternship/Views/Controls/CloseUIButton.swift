@@ -9,7 +9,7 @@ import UIKit
 
 @IBDesignable
 final class CloseUIButton: UIButton {
-    static private let defaultImageConfig = UIImage.SymbolConfiguration(pointSize: K.Buttons.defaultXmarkSize, weight: .bold, scale: .large)
+    static private let defaultImageConfig = UIImage.SymbolConfiguration(pointSize: K.Buttons.defaultXmarkSize)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -23,11 +23,10 @@ final class CloseUIButton: UIButton {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setXmark(CloseUIButton.defaultImageConfig)
     }
     
     
-    fileprivate func setXmark(_ configuration: UIImage.Configuration = defaultImageConfig) {
+    private func setXmark(_ configuration: UIImage.Configuration = defaultImageConfig) {
         let xmark = UIImage(systemName: "xmark", withConfiguration: configuration)
         self.setImage(xmark, for: .normal)
         self.tintColor = .label

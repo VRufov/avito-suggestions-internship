@@ -1,5 +1,5 @@
 //
-//  SuggectionsResponseModel.swift
+//  SuggestionsResponseModel.swift
 //  iosInternship
 //
 //  Created by Вадим Руфов on 4/12/22.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SuggectionsResponseModel: Decodable {
+struct SuggestionsResponseModel: Decodable {
     let status: String
-    let result: SuggectionsResultModel
+    let result: SuggestionsResultModel?
 }
